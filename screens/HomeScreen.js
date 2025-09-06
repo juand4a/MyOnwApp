@@ -1,48 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList } from 'react-native';
-import db from '../services/db';
+import { View, Text, Button, FlatList, TouchableOpacity } from 'react-native';
+import styles from './styles/Home';
+import { Image } from 'expo-image';
+const imageSource = require('./../assets/camaro.jpg');
 
 const HomeScreen = ({ navigation }) => {
-  const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const result = await db.getAllUsers();
-        setItems(result);
-      } catch (err) {
-        console.error(err);
-      }
-    };
 
-    loadItems();
-  }, []);
-
-  const renderItem = ({ item }) => (
-    <View>
-      <Text>{item.name}</Text>
-      <Text>{item.description}</Text>
-      <Button title="Editar" onPress={() => navigation.navigate('Edit', { itemId: item.id })} />
-      <Button title="Eliminar" onPress={async () => {
-        try {
-          await db.deleteUser(item.id);
-          setItems(prevItems => prevItems.filter(i => i.id !== item.id));
-        } catch (err) {
-          console.error(err);
-        }
-      }} />
-    </View>
-  );
 
   return (
-    <View>
-      <Button title="Agregar Item" onPress={() => navigation.navigate('Add')} />
-      <FlatList
-        data={items}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderItem}
-      />
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome to your OWNAPP</Text>
+      <Text style={styles.title}>Because the Camaro it's the important</Text>
+      <View style={styles.contentIMG}>
+        <Image
+          style={styles.image}
+          source={imageSource}
+          transition={1000}
+        />
+      </View>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.btn}>
+        <Text style={styles.btnText}>Ingresar</Text>
+
+      </TouchableOpacity>
+
     </View>
+
   );
 };
 

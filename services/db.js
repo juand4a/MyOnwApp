@@ -15,12 +15,16 @@ const init = async () => {
   `);
 
   await db.withTransactionAsync(async () => {
+    //     await db.runAsync(`
+    //   ALTER TABLE users ADD COLUMN salary INTEGER;
+    // `);
     await db.runAsync(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT,
         email TEXT UNIQUE,
-        password TEXT,
+        password TEXT UNIQUE,
+        salary INTEGER,
         created_at TEXT
       );
     `);
@@ -102,11 +106,11 @@ const init = async () => {
 // ========================== CRUD ==========================
 
 // Usuarios
-const insertUser = async (name, email, password) => {
+const insertUser = async (name, email, password,salary) => {
   const db = await dbPromise;
   const res = await db.runAsync(
-    `INSERT INTO users (name, email, password, created_at) VALUES (?, ?, ?, ?);`,
-    [name, email, password, nowISO()]
+    `INSERT INTO users (name, email, password, salary, created_at) VALUES (?, ?, ?, ?, ?);`,
+    [name, email, password, salary, nowISO()]
   );
   return { id: res.lastInsertRowId };
 };
@@ -114,6 +118,13 @@ const insertUser = async (name, email, password) => {
 const getAllUsers = async () => {
   const db = await dbPromise;
   return db.getAllAsync(`SELECT * FROM users;`);
+};
+const getUserByCredentials = async (email, password) => {
+  const db = await dbPromise;
+  return db.getFirstAsync(
+    `SELECT * FROM users WHERE email = ? AND password = ?;`,
+    [email, password]
+  );
 };
 
 const updateUser = async (id, name, email, password) => {
@@ -325,6 +336,7 @@ export default {
   init,
   insertUser,
   getAllUsers,
+  getUserByCredentials,
   updateUser,
   deleteUser,
   insertCategory,

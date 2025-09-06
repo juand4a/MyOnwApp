@@ -46,6 +46,15 @@ const EditItemScreen = ({ route, navigation }) => {
         onChangeText={setDescription}
       />
       <Button title="Actualizar" onPress={handleEditItem} />
+        <Button title="Eliminar" onPress={async () => {
+              try {
+                await db.deleteUser(item.id);
+                setItems(prevItems => prevItems.filter(i => i.id !== item.id));
+                Alert.alert("Exito","Usuario Eliminado Con Exito")
+              } catch (err) {
+                console.error(err);
+              }
+            }} />
     </View>
   );
 };
